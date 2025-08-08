@@ -8,13 +8,12 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { adminPaths } from "@/routes/admin.routes";
-import { facultyPaths } from "@/routes/faculty.routes";
+
 import { studentPaths } from "@/routes/student.routes";
 const roleBasedPaths = {
   admin: adminPaths,
   superAdmin: adminPaths,
   student: studentPaths,
-  faculty: facultyPaths,
 };
 
 const Sidebar: React.FC = () => {

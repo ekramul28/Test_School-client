@@ -15,8 +15,6 @@ import { studentPaths } from "./student.routes";
 
 import { NotFoundPage } from "@/pages/NotFound";
 
-import { facultyPaths } from "./faculty.routes";
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -72,20 +70,7 @@ const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage /> },
     ],
   },
-  {
-    path: "/faculty",
-    element: (
-      <ProtectedRoute role="faculty">
-        <ThemeProvider>
-          <DashboardLayout />
-        </ThemeProvider>
-      </ProtectedRoute>
-    ),
-    children: [
-      ...routeGenerator(facultyPaths),
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
+
   {
     path: "*",
     element: <NotFoundPage />,
