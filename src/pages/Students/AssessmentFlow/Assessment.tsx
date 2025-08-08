@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import {
   Card,
   CardHeader,
@@ -25,8 +24,18 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useGetAllQuestionsQuery } from "@/redux/features/admin/question.api";
 
+import { useAppSelector } from "@/redux/hooks";
+import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import {
+  useCreateExamMutation,
+  useGetExamByUserAndStepQuery,
+  useUpdateExamMutation,
+} from "@/redux/features/exam/exam.api";
+import { useCreateCertificateMutation } from "@/redux/features/certificate/certificateApi";
+
 const AssessmentFlow = () => {
   const navigate = useNavigate();
+  const user = useAppSelector(selectCurrentUser);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -46,7 +55,7 @@ const AssessmentFlow = () => {
     3: ["C1", "C2"],
   };
 
-  // Using Redux query to fetch questions
+  // API hooks
   const {
     data: questionsResponse,
     isLoading,
@@ -56,6 +65,15 @@ const AssessmentFlow = () => {
     { name: "level", value: levelMap[currentStep].join(",") },
     { name: "isDeleted", value: "false" },
   ]);
+
+  const { data: existingExam } = useGetExamByUserAndStepQuery(
+    { userId: user?.userId || "", step: currentStep },
+    { skip: !user?.userId }
+  );
+
+  const [createCertificate] = useCreateCertificateMutation();
+  const [createExam] = useCreateExamMutation();
+  const [updateExam] = useUpdateExamMutation();
 
   const questions = questionsResponse?.data || [];
 
@@ -110,7 +128,7 @@ const AssessmentFlow = () => {
     }
   };
 
-  const calculateResult = () => {
+  const calculateResult = async () => {
     if (questions.length === 0) return;
 
     const percentage = (score / questions.length) * 100;
@@ -147,6 +165,38 @@ const AssessmentFlow = () => {
     }
 
     setResult(levelResult);
+
+    // Save exam results
+    try {
+      const examData = {
+        userId: user?.userId,
+        step: currentStep,
+        score: percentage,
+        passed: levelResult.passed,
+        levelAchieved: levelResult.level,
+        canProceed: levelResult.canProceed,
+        totalQuestions: questions.length,
+        correctAnswers: score,
+      };
+
+      if (existingExam) {
+        await updateExam({ id: existingExam._id, data: examData });
+      } else {
+        await createExam(examData);
+      }
+
+      // Create certificate if passed
+      if (levelResult.passed) {
+        await createCertificate({
+          userId: user?.userId,
+          level: levelResult.level,
+          score: percentage,
+          assessmentDate: new Date().toISOString(),
+        });
+      }
+    } catch (err) {
+      console.error("Error saving exam results:", err);
+    }
   };
 
   const proceedToNextStep = () => {
@@ -165,14 +215,24 @@ const AssessmentFlow = () => {
     window.location.reload();
   };
 
-  const handleDownloadCertificate = () => {
-    // In a real implementation, this would call an API endpoint
-    alert("Certificate download would be implemented here");
+  const handleDownloadCertificate = async () => {
+    try {
+      // In a real implementation, this would call an API endpoint
+      // that returns the PDF file or a download link
+      alert("Certificate download would be implemented here");
+    } catch (err) {
+      console.error("Error downloading certificate:", err);
+    }
   };
 
-  const handleEmailCertificate = () => {
-    // In a real implementation, this would call an API endpoint
-    alert("Email certificate functionality would be implemented here");
+  const handleEmailCertificate = async () => {
+    try {
+      // In a real implementation, this would call an API endpoint
+      // that sends the certificate to the user's email
+      alert("Email certificate functionality would be implemented here");
+    } catch (err) {
+      console.error("Error emailing certificate:", err);
+    }
   };
 
   const handleReturnToDashboard = () => {

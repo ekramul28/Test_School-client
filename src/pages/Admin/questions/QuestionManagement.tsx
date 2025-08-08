@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Edit, Trash2, Plus, X } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
 
 type TQuestion = {
@@ -65,6 +65,7 @@ const QuestionManagement = () => {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<TQuestion>({
     defaultValues: {
@@ -87,6 +88,7 @@ const QuestionManagement = () => {
   }, [singleQuestion, editingId, reset]);
 
   const onSubmit = async (data: TQuestion) => {
+    console.log("this is data", data);
     try {
       if (editingId) {
         await updateQuestion({ id: editingId, data }).unwrap();
@@ -288,31 +290,36 @@ const QuestionManagement = () => {
                     )}
                   </div>
 
-                  <div>
-                    <Label htmlFor="level">Level</Label>
-                    <Select
-                      {...register("level", {
-                        required: "Level is required",
-                      })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["A1", "A2", "B1", "B2", "C1", "C2"].map((lvl) => (
-                          <SelectItem key={lvl} value={lvl}>
-                            {lvl}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.level && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.level.message}
-                      </p>
+                  <Controller
+                    name="level"
+                    control={control}
+                    rules={{ required: "Level is required" }}
+                    render={({ field }) => (
+                      <div>
+                        <Label htmlFor="level">Level</Label>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["A1", "A2", "B1", "B2", "C1", "C2"].map((lvl) => (
+                              <SelectItem key={lvl} value={lvl}>
+                                {lvl}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.level && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.level.message}
+                          </p>
+                        )}
+                      </div>
                     )}
-                  </div>
-
+                  />
                   <div>
                     <Label htmlFor="competency">Competency</Label>
                     <Input
