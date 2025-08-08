@@ -85,6 +85,8 @@ export const baseApi = createApi({
     "Questions",
     "studentProfiles",
     "userProfiles",
+    "admin",
+    "Certificates",
   ],
   endpoints: () => ({}),
 });
