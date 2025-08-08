@@ -7,36 +7,13 @@ import AcademicOfferedCourseShow from "@/pages/share/facultyAndStudent/academicO
 import { BookOpen, Megaphone, User } from "lucide-react";
 
 export const facultyPaths = [
-  // {
-  //   name: "Dashboard",
-  //   path: "dashboard",
-  //   element: <InstructorDashboard />,
-  //   icon: <LayoutDashboard className="w-5 h-5" />,
-  // },
+  ,
   {
     name: "Profile",
     path: "profile",
     element: <FacultyProfile />,
     icon: <User className="w-5 h-5" />,
   },
-  // {
-  //   name: "Academic Faculty",
-  //   path: "academic-faculty",
-  //   element: <AcademicFacultyShow />,
-  //   icon: <Users className="w-5 h-5" />,
-  // },
-  // {
-  //   name: "Academic Department",
-  //   path: "academic-department",
-  //   element: <AcademicDepartmentShow />,
-  //   icon: <Building2 className="w-5 h-5" />,
-  // },
-  // {
-  //   name: "Academic Semester",
-  //   path: "academic-semester",
-  //   element: <AcademicSemesterShow />,
-  //   icon: <CalendarDays className="w-5 h-5" />,
-  // },
 
   {
     name: "Faculty ",
