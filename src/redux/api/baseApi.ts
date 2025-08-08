@@ -79,13 +79,11 @@ export const baseApi = createApi({
   baseQuery: baseQueryWithRefreshToken,
   tagTypes: [
     "Supervisor",
-
     "students",
-
+    "Exams",
     "admins",
     "Questions",
     "studentProfiles",
-
     "userProfiles",
   ],
   endpoints: () => ({}),

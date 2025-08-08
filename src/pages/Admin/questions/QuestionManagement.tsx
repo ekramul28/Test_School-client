@@ -52,7 +52,7 @@ const QuestionManagement = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Redux API hooks
-  const { data: questions, isLoading, refetch } = useGetAllQuestionsQuery({});
+  const { data: questions, isLoading, refetch } = useGetAllQuestionsQuery([]);
   const { data: singleQuestion } = useGetSingleQuestionQuery(editingId || "", {
     skip: !editingId,
   });
@@ -170,7 +170,7 @@ const QuestionManagement = () => {
                   <TableCell>{question.competency}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {question.options.map((opt, i) => (
+                      {question.options.map((opt: any, i: any) => (
                         <Badge key={i} variant="outline">
                           {opt}
                         </Badge>

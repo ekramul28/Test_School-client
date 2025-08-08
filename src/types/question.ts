@@ -9,4 +9,5 @@ export type TQuestion = {
   updatedAt?: string;
   durationInSeconds: number | string;
   correctAnswer: number | string | null;
+  data: any;
 };
