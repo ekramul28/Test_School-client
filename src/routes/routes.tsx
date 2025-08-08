@@ -14,7 +14,7 @@ import { adminPaths } from "./admin.routes";
 import { studentPaths } from "./student.routes";
 
 import { NotFoundPage } from "@/pages/NotFound";
-import StudentCourseList from "@/pages/Students/courses/StudentCourseList";
+
 import { facultyPaths } from "./faculty.routes";
 
 const router = createBrowserRouter([
@@ -29,10 +29,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-      },
-      {
-        path: "courses",
-        element: <StudentCourseList />,
       },
       {
         path: "login",
