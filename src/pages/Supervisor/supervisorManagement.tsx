@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, MoreHorizontal, Pencil, Trash2, BookOpen } from "lucide-react";
 
-import type { TFaculty } from "@/types/supervisor";
+import type { TSupervisor } from "@/types/supervisor";
 
 import type { TQueryParam } from "@/types/global";
 import { Pagination } from "@/components/ui/pagination";
@@ -44,23 +44,23 @@ import {
 } from "@/components/ui/select";
 import FacultyForm from "@/components/form/supervisor/SupervisoerForm";
 import {
-  useDeleteFacultyMutation,
-  useGetAllFacultiesQuery,
-} from "@/redux/features/faculty/facultyApi";
+  useDeleteSupervisorMutation,
+  useGetAllSupervisorsQuery,
+} from "@/redux/supervisoer/supervisoerApi";
 
-export default function FacultyManagement() {
+export default function SupervisorManagement() {
   const { toast } = useToast();
-  const [faculties, setFaculties] = useState<TFaculty[]>([]);
+  const [faculties, setFaculties] = useState<TSupervisor[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedFaculty, setSelectedFaculty] = useState<
-    TFaculty | undefined
+    TSupervisor | undefined
   >();
   const [isSubjectsDialogOpen, setIsSubjectsDialogOpen] = useState(false);
   const [selectedFacultyForSubjects, setSelectedFacultyForSubjects] = useState<
-    TFaculty | undefined | any
+    TSupervisor | undefined | any
   >();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [facultyToDelete, setFacultyToDelete] = useState<any | null>(null);
+  const [facultyToDelete, seTSupervisorToDelete] = useState<any | null>(null);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [filters, setFilters] = useState({
@@ -69,7 +69,7 @@ export default function FacultyManagement() {
     status: "",
   });
 
-  const [deleteFaculty] = useDeleteFacultyMutation();
+  const [deleteFaculty] = useDeleteSupervisorMutation();
 
   // Prepare query params
   const queryParams: TQueryParam[] = [
@@ -87,7 +87,8 @@ export default function FacultyManagement() {
     queryParams.push({ name: "status", value: filters.status });
   }
 
-  const { data: facultyData, isLoading } = useGetAllFacultiesQuery(queryParams);
+  const { data: facultyData, isLoading } =
+    useGetAllSupervisorsQuery(queryParams);
   console.log("facultyData", facultyData);
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, search: value }));
@@ -113,7 +114,7 @@ export default function FacultyManagement() {
     setPage(1);
   };
 
-  const handleFormSuccess = (updatedFaculty?: TFaculty) => {
+  const handleFormSuccess = (updatedFaculty?: TSupervisor) => {
     if (updatedFaculty) {
       setFaculties((prev) =>
         prev.map((faculty) =>
@@ -131,18 +132,18 @@ export default function FacultyManagement() {
     });
   };
 
-  const handleEdit = (faculty: TFaculty) => {
+  const handleEdit = (faculty: TSupervisor) => {
     setSelectedFaculty(faculty);
     setIsFormOpen(true);
   };
 
-  const handleViewSubjects = (faculty: TFaculty) => {
+  const handleViewSubjects = (faculty: TSupervisor) => {
     setSelectedFacultyForSubjects(faculty);
     setIsSubjectsDialogOpen(true);
   };
 
   const handleDelete = (faculty: any) => {
-    setFacultyToDelete(faculty);
+    seTSupervisorToDelete(faculty);
     setDeleteDialogOpen(true);
   };
 
@@ -155,7 +156,7 @@ export default function FacultyManagement() {
           description: "Faculty deleted successfully",
         });
         setDeleteDialogOpen(false);
-        setFacultyToDelete(null);
+        seTSupervisorToDelete(null);
       }
     } catch (error) {
       toast({

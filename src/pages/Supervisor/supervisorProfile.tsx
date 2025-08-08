@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FacultyForm from "@/components/form/supervisor/SupervisoerForm";
 
-const FacultyProfile = () => {
+const SupervisorProfile = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -332,4 +332,4 @@ const InfoItem = ({
   </div>
 );
 
-export default FacultyProfile;
+export default SupervisorProfile;

@@ -1,13 +1,7 @@
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -35,30 +29,33 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Pencil, Trash2, BookOpen } from "lucide-react";
 
-import type { TFaculty } from "@/types/supervisor";
 import { useState } from "react";
+
+import type { TSupervisor } from "@/types/supervisor";
 import {
-  useDeleteFacultyMutation,
-  useGetAllFacultiesQuery,
-} from "@/redux/features/faculty/facultyApi";
+  useDeleteSupervisorMutation,
+  useGetAllSupervisorsQuery,
+} from "@/redux/supervisoer/supervisoerApi";
 
 interface FacultyListProps {
-  onEdit: (faculty: TFaculty) => void;
-  onViewSubjects: (faculty: TFaculty) => void;
+  onEdit: (faculty: TSupervisor) => void;
+  onViewSubjects: (faculty: TSupervisor) => void;
 }
 
 const FacultyList = ({ onEdit, onViewSubjects }: FacultyListProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [facultyToDelete, setFacultyToDelete] = useState<TFaculty | null>(null);
+  const [facultyToDelete, seTSupervisorToDelete] = useState<TSupervisor | null>(
+    null
+  );
   const [filters, setFilters] = useState({
     search: "",
     department: "",
     faculty: "",
   });
 
-  const { data: facultyData, isLoading } = useGetAllFacultiesQuery(filters);
+  const { data: facultyData, isLoading } = useGetAllSupervisorsQuery(filters);
   console.log("facultyData", facultyData);
-  const [deleteFaculty] = useDeleteFacultyMutation();
+  const [deleteFaculty] = useDeleteSupervisorMutation();
 
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, search: value }));
@@ -72,8 +69,8 @@ const FacultyList = ({ onEdit, onViewSubjects }: FacultyListProps) => {
     });
   };
 
-  const handleDelete = (faculty: TFaculty) => {
-    setFacultyToDelete(faculty);
+  const handleDelete = (faculty: TSupervisor) => {
+    seTSupervisorToDelete(faculty);
     setDeleteDialogOpen(true);
   };
 
@@ -82,7 +79,7 @@ const FacultyList = ({ onEdit, onViewSubjects }: FacultyListProps) => {
       try {
         await deleteFaculty(facultyToDelete.id).unwrap();
         setDeleteDialogOpen(false);
-        setFacultyToDelete(null);
+        seTSupervisorToDelete(null);
       } catch (error) {
         console.error("Failed to delete faculty:", error);
       }
@@ -136,7 +133,7 @@ const FacultyList = ({ onEdit, onViewSubjects }: FacultyListProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {facultyData?.data?.map((faculty: TFaculty) => (
+                {facultyData?.data?.map((faculty: TSupervisor) => (
                   <TableRow key={faculty.id}>
                     <TableCell>
                       {`${faculty.name.firstName} ${

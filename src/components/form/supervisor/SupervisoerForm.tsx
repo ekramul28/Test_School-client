@@ -9,14 +9,16 @@ import {
   useGetAcademicFacultiesQuery,
   useGetAcademicDepartmentsQuery,
 } from "@/redux/features/admin/academicManagement.api";
-import type { TFaculty } from "@/types/supervisor";
+
 import { CustomFormField } from "@/components/ui/form-field";
-import {
-  useCreateFacultyMutation,
-  useUpdateFacultyMutation,
-} from "@/redux/features/faculty/facultyApi";
+
 import { toast } from "sonner";
 import { useState } from "react";
+import type { TSupervisor } from "@/types/supervisor";
+import {
+  useCreateSupervisorMutation,
+  useUpdateSupervisorMutation,
+} from "@/redux/supervisoer/supervisoerApi";
 
 // Constants for validation
 const Gender = ["male", "female", "other"] as const;
@@ -60,13 +62,13 @@ const formSchema = z.object({
 });
 
 interface FacultyFormProps {
-  faculty?: TFaculty | undefined;
+  faculty?: TSupervisor | undefined;
   onSuccess: () => void;
 }
 
 export default function FacultyForm({ faculty, onSuccess }: FacultyFormProps) {
-  const [createFaculty] = useCreateFacultyMutation();
-  const [updateFaculty] = useUpdateFacultyMutation();
+  const [createFaculty] = useCreateSupervisorMutation();
+  const [updateFaculty] = useUpdateSupervisorMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { data: departmentsData } = useGetAcademicDepartmentsQuery(undefined);
