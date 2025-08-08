@@ -58,8 +58,6 @@ const studentSchema = z.object({
     contactNo: z.string().min(1, "Local guardian's contact number is required"),
     address: z.string().min(1, "Local guardian's address is required"),
   }),
-  admissionSemester: z.string().min(1, "Admission Semester is required"),
-  academicDepartment: z.string().min(1, "Academic Department is required"),
 });
 
 type StudentFormData = z.infer<typeof studentSchema>;
@@ -106,8 +104,6 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
         contactNo: "",
         address: "",
       },
-      admissionSemester: "",
-      academicDepartment: "",
     },
   });
 
@@ -125,14 +121,6 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
         permanentAddress: student.permanentAddress,
         guardian: student.guardian,
         localGuardian: student.localGuardian,
-        admissionSemester:
-          typeof student.admissionSemester === "string"
-            ? student.admissionSemester
-            : student.admissionSemester?.name,
-        academicDepartment:
-          typeof student.academicDepartment === "string"
-            ? student.academicDepartment
-            : student.academicDepartment?.name,
       });
     }
   }, [student, form]);
@@ -207,7 +195,12 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6"> */}
+            <form
+              noValidate
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Personal Information</h3>
 
