@@ -21,7 +21,7 @@ export interface TSupervisor {
   designation: string;
   name: TUserName;
   gender: Gender;
-  dateOfBirth?: Date;
+  dateOfBirth?: Date | string | undefined;
   email: string;
   contactNo: string;
   emergencyContactNo: string;

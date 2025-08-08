@@ -185,7 +185,7 @@ export default function SupervisorManagement() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <FacultyForm
-              faculty={selectedFaculty}
+              supervisor={selectedFaculty}
               onSuccess={handleFormSuccess}
             />
           </DialogContent>
