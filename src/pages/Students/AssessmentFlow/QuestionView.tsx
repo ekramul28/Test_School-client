@@ -1,49 +1,78 @@
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { Progress } from "@/components/ui/progress";
 
-interface QuestionViewProps {
-  questionText: string;
+interface Question {
+  question: string;
   options: string[];
-  selectedAnswer: string | null;
-  onSelect: (answer: string) => void;
-  disabled?: boolean;
+  correctAnswer: string | number | null;
 }
 
-export const QuestionView = ({
-  questionText,
-  options,
+interface QuestionCardProps {
+  question: Question;
+  index: number;
+  total: number;
+  selectedAnswer: string | null;
+  onSelectAnswer: (answer: string) => void;
+  onNext: () => void;
+  timeLeft: number;
+  step: number;
+}
+
+const QuestionCard = ({
+  question,
+  index,
+  total,
   selectedAnswer,
-  onSelect,
-  disabled = false,
-}: QuestionViewProps) => {
+  onSelectAnswer,
+  onNext,
+  timeLeft,
+  step,
+}: QuestionCardProps) => {
+  const percentage = ((index + 1) / total) * 100;
+
   return (
-    <div className="space-y-8">
-      <h3 className="text-xl font-semibold text-gray-800">{questionText}</h3>
-      <div className="grid grid-cols-1 gap-3">
-        <AnimatePresence>
-          {options.map((option, index) => (
-            <motion.div
-              key={option}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
+    <div className="max-w-3xl mx-auto p-6">
+      <Card className="border-none shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-lg">
+            Step {step} | Question {index + 1} of {total}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Time Left: {timeLeft}s
+          </p>
+          <Progress value={percentage} />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <h2 className="text-xl font-semibold">{question.question}</h2>
+          <div className="grid gap-3">
+            {question.options.map((option) => (
               <Button
+                key={option}
                 variant={selectedAnswer === option ? "default" : "outline"}
-                className={`w-full justify-start py-6 text-left h-auto transition-colors ${
-                  selectedAnswer === option
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "hover:bg-gray-50"
-                }`}
-                onClick={() => onSelect(option)}
-                disabled={disabled}
+                className="w-full text-left"
+                onClick={() => onSelectAnswer(option)}
+                disabled={!!selectedAnswer}
               >
-                <span className="whitespace-normal text-left">{option}</span>
+                {option}
               </Button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button onClick={onNext} disabled={!selectedAnswer}>
+            {index + 1 === total ? "Submit" : "Next"}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
+
+export default QuestionCard;

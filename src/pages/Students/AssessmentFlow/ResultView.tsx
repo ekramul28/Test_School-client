@@ -1,125 +1,117 @@
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { motion } from "framer-motion";
-import { CertificateActions } from "./CertificateActions";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Separator } from "@radix-ui/react-select";
+import { Badge, Download, Mail } from "lucide-react";
 
-interface ResultViewProps {
-  score: number;
-  totalQuestions: number;
-  level: string;
-  passed: boolean;
-  canProceed: boolean;
-  currentStep: number;
-  onNextStep: () => void;
-  onReturn: () => void;
-}
-
-export const ResultView = ({
+const ResultCard = ({
+  result,
   score,
-  totalQuestions,
-  level,
-  passed,
-  canProceed,
+  total,
   currentStep,
-  onNextStep,
+  onProceed,
   onReturn,
-}: ResultViewProps) => {
-  const percentage = (score / totalQuestions) * 100;
+}: {
+  result: { level: string; passed: boolean; canProceed: boolean };
+  score: number;
+  total: number;
+  currentStep: number;
+  onProceed: () => void;
+  onReturn: () => void;
+}) => {
+  const percentage = (score / total) * 100;
 
-  if (!passed) {
-    return (
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        className="space-y-6"
-      >
-        <Alert variant="destructive" className="border-l-4 border-red-500">
-          <AlertTitle className="font-semibold">
-            Assessment Not Passed
-          </AlertTitle>
-          <AlertDescription>
-            {currentStep === 1
-              ? "You scored less than 25%. No retakes are allowed at this level."
-              : `You'll remain at ${level} level.`}
-          </AlertDescription>
-        </Alert>
+  const handleDownloadCertificate = () => {
+    alert("Download certificate PDF logic here.");
+    // implement real download API call here
+  };
 
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h3 className="font-medium text-lg mb-2">Your Score</h3>
-          <Progress value={percentage} className="h-3" />
-          <div className="flex justify-between mt-2 text-sm text-gray-600">
-            <span>0%</span>
-            <span>25% (Minimum to pass)</span>
-            <span>100%</span>
-          </div>
-          <p className="mt-4 text-center text-2xl font-bold text-red-600">
-            {percentage.toFixed(0)}%
-          </p>
-          <p className="text-center text-gray-600 mt-2">
-            {score} correct out of {totalQuestions} questions
-          </p>
-        </div>
-      </motion.div>
-    );
-  }
+  const handleEmailCertificate = () => {
+    alert("Send certificate email logic here.");
+    // implement email API call here
+  };
 
   return (
-    <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="space-y-8"
-    >
-      <div className="flex flex-col items-center text-center">
-        <Badge className="px-4 py-2 text-lg mb-4 bg-green-600 hover:bg-green-700 text-white">
-          LEVEL {level} CERTIFIED
-        </Badge>
-
-        <div className="w-full max-w-xs mx-auto">
-          <Progress value={percentage} className="h-2" />
-          <div className="flex justify-between mt-2 text-sm text-gray-600">
-            <span>0%</span>
-            <span>50%</span>
-            <span>100%</span>
+    <Card className="max-w-4xl mx-auto p-6 shadow-lg border-none">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Assessment Results</h2>
+            <p className="text-blue-100 mt-1">
+              Step {currentStep} Level Certification
+            </p>
           </div>
+          <Badge className="bg-green-600 text-white px-4 py-2">
+            LEVEL {result.level} CERTIFIED
+          </Badge>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-8 space-y-6">
+        <div className="text-center">
+          <p className="text-4xl font-bold text-blue-700">
+            {percentage.toFixed(0)}%
+          </p>
+          <p className="mt-2 text-gray-600">
+            {score} correct out of {total} questions
+          </p>
         </div>
 
-        <p className="mt-6 text-4xl font-bold text-blue-700">
-          {percentage.toFixed(0)}%
-        </p>
+        <Separator />
 
-        <p className="mt-2 text-gray-600">
-          {score} out of {totalQuestions} questions correct
-        </p>
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card
+            className="hover:shadow-md transition-shadow cursor-pointer"
+            onClick={handleDownloadCertificate}
+          >
+            <CardHeader className="pb-2">
+              <h3 className="text-lg flex items-center gap-2">
+                <Download className="h-5 w-5 text-blue-600" />
+                Download Certificate
+              </h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Get your official digital certificate in PDF format.
+              </p>
+            </CardContent>
+          </Card>
 
-      {canProceed && (
-        <Alert className="border-l-4 border-blue-500">
-          <AlertTitle className="font-semibold">Congratulations!</AlertTitle>
-          <AlertDescription>
-            Your score qualifies you for the next level assessment.
-          </AlertDescription>
-        </Alert>
-      )}
+          <Card
+            className="hover:shadow-md transition-shadow cursor-pointer"
+            onClick={handleEmailCertificate}
+          >
+            <CardHeader className="pb-2">
+              <h3 className="text-lg flex items-center gap-2">
+                <Mail className="h-5 w-5 text-blue-600" />
+                Email Certificate
+              </h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">
+                Have your certificate sent directly to your email.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </CardContent>
 
-      <Separator className="my-6" />
-
-      <CertificateActions />
-
-      <div className="flex justify-between">
+      <CardFooter className="bg-gray-50 rounded-b-lg p-6 flex justify-between">
         <Button variant="ghost" onClick={onReturn}>
           Return to Dashboard
         </Button>
-        {canProceed ? (
-          <Button className="gap-2" onClick={onNextStep}>
+        {result.canProceed && (
+          <Button className="gap-2" onClick={onProceed}>
             Proceed to Step {currentStep + 1}
           </Button>
-        ) : (
-          <Button variant="secondary">View Learning Resources</Button>
         )}
-      </div>
-    </motion.div>
+      </CardFooter>
+    </Card>
   );
 };
+
+export default ResultCard;
