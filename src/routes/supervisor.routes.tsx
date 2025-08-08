@@ -1,7 +1,7 @@
 import StudentProfile from "@/pages/Students/StudentProfile";
 import { User } from "lucide-react";
 
-export const studentPaths = [
+export const supervisorPaths = [
   {
     name: "Profile",
     path: "profile",

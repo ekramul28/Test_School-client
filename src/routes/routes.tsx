@@ -14,6 +14,7 @@ import { adminPaths } from "./admin.routes";
 import { studentPaths } from "./student.routes";
 
 import { NotFoundPage } from "@/pages/NotFound";
+import { supervisorPaths } from "./supervisor.routes";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,20 @@ const router = createBrowserRouter([
     ),
     children: [
       ...routeGenerator(studentPaths),
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+  {
+    path: "/supervisor",
+    element: (
+      <ProtectedRoute role="supervisor">
+        <ThemeProvider>
+          <DashboardLayout />
+        </ThemeProvider>
+      </ProtectedRoute>
+    ),
+    children: [
+      ...routeGenerator(supervisorPaths),
       { path: "*", element: <NotFoundPage /> },
     ],
   },
