@@ -11,8 +11,7 @@ import {
 import { FormFields } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useGetAllAcademicDepartmentsQuery } from "@/redux/features/academic/academicDepartmentApi";
-import { useGetAllAcademicSemestersQuery } from "@/redux/features/academic/academicSemesterApi";
+
 import {
   useCreateStudentMutation,
   useUpdateStudentMutation,
@@ -75,8 +74,6 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
   const [createStudent] = useCreateStudentMutation();
   const [updateStudent] = useUpdateStudentMutation();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const { data: semestersData } = useGetAllAcademicSemestersQuery([]);
-  const { data: departmentsData } = useGetAllAcademicDepartmentsQuery([]);
 
   const form = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
@@ -198,20 +195,6 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
     }
   };
 
-  // Convert data to select options format
-  const semesterOptions =
-    semestersData?.data?.map((semester: any) => ({
-      label: `${semester.name} `,
-      value: semester._id,
-    })) || [];
-
-  const departmentOptions =
-    departmentsData?.data?.map((department: any) => ({
-      label: department.name,
-      value: department._id,
-    })) || [];
-  console.log(semesterOptions);
-  console.log(departmentOptions);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -451,26 +434,6 @@ const StudentForm = ({ student, onSuccess }: StudentFormProps) => {
                     name="localGuardian.address"
                     label="Local Guardian's Address"
                     placeholder="Enter local guardian's address"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Academic Information</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <FormFields.Select
-                    form={form}
-                    name="admissionSemester"
-                    label="Admission Semester"
-                    options={semesterOptions}
-                    required
-                  />
-                  <FormFields.Select
-                    form={form}
-                    name="academicDepartment"
-                    label="Academic Department"
-                    options={departmentOptions}
                     required
                   />
                 </div>

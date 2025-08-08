@@ -44,8 +44,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { TStudent } from "@/types/student";
-import { useGetAllAcademicDepartmentsQuery } from "@/redux/features/academic/academicDepartmentApi";
-import { useGetAllFacultiesQuery } from "@/redux/features/faculty/facultyApi";
+
 import { useGetAllSemestersQuery } from "@/redux/features/admin/academicManagement.api";
 import { Pagination } from "@/components/ui/pagination";
 
@@ -88,8 +87,7 @@ const StudentList = ({ onEdit }: StudentListProps) => {
   }, [debouncedSearchTerm, filters, page]);
 
   const { data: studentsData, isLoading } = useGetAllStudentsQuery(queryParams);
-  const { data: departments } = useGetAllAcademicDepartmentsQuery([]);
-  const { data: faculties } = useGetAllFacultiesQuery([]);
+
   const { data: semesters } = useGetAllSemestersQuery([]);
 
   const [deleteStudent] = useDeleteStudentMutation();
@@ -147,8 +145,7 @@ const StudentList = ({ onEdit }: StudentListProps) => {
 
   const students = studentsData?.data || [];
   console.log({ semesters });
-  console.log({ faculties });
-  console.log({ departments });
+
   console.log(students);
   return (
     <motion.div
