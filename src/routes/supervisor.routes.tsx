@@ -1,4 +1,4 @@
-import SupervisorManagement from "@/pages/Supervisor/supervisorManagement";
+import SupervisorManagement from "@/pages/Admin/supervisorManagement";
 import SupervisorProfile from "@/pages/Supervisor/supervisorProfile";
 import { User } from "lucide-react";
 

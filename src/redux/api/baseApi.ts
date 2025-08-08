@@ -83,7 +83,7 @@ export const baseApi = createApi({
     "students",
 
     "admins",
-
+    "Questions",
     "studentProfiles",
 
     "userProfiles",

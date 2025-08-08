@@ -46,7 +46,7 @@ import FacultyForm from "@/components/form/supervisor/SupervisoerForm";
 import {
   useDeleteSupervisorMutation,
   useGetAllSupervisorsQuery,
-} from "@/redux/supervisoer/supervisoerApi";
+} from "@/redux/features/supervisoer/supervisoerApi";
 
 export default function SupervisorManagement() {
   const { toast } = useToast();

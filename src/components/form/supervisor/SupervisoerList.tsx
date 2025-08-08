@@ -35,7 +35,7 @@ import type { TSupervisor } from "@/types/supervisor";
 import {
   useDeleteSupervisorMutation,
   useGetAllSupervisorsQuery,
-} from "@/redux/supervisoer/supervisoerApi";
+} from "@/redux/features/supervisoer/supervisoerApi";
 
 interface FacultyListProps {
   onEdit: (faculty: TSupervisor) => void;

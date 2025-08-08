@@ -1,8 +1,12 @@
 import AdminManagement from "@/pages/Admin/AdminManagement";
 import AdminProfile from "@/pages/Admin/AdminProfile";
+import AddQuestion from "@/pages/Admin/questions/AddQuestion";
+import QuestionManagement from "@/pages/Admin/questions/QuestionManagement";
 
-import StudentManagement from "@/pages/Students/StudentManagement";
-import { GraduationCap, User } from "lucide-react";
+import StudentManagement from "@/pages/Admin/StudentManagement";
+import AssessmentFlow from "@/pages/Students/AssessmentFlow/Assessment";
+
+import { FileQuestion, GraduationCap, User } from "lucide-react";
 
 export const adminPaths = [
   {
@@ -23,5 +27,23 @@ export const adminPaths = [
     path: "adminmanagement",
     element: <AdminManagement />,
     icon: <GraduationCap className="w-5 h-5" />,
+  },
+  {
+    name: "assessmentFlow",
+    path: "assessmentFlow",
+    element: <AssessmentFlow />,
+    icon: <GraduationCap className="w-5 h-5" />,
+  },
+  {
+    name: "Add Question",
+    path: "addquestion",
+    element: <AddQuestion />,
+    icon: <FileQuestion className="w-5 h-5" />,
+  },
+  {
+    name: "QuestionManagement",
+    path: "questionmanagement",
+    element: <QuestionManagement />,
+    icon: <FileQuestion className="w-5 h-5" />,
   },
 ];

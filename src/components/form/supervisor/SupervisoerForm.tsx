@@ -15,7 +15,7 @@ import {
 import {
   useCreateSupervisorMutation,
   useUpdateSupervisorMutation,
-} from "@/redux/supervisoer/supervisoerApi";
+} from "@/redux/features/supervisoer/supervisoerApi";
 
 import { CustomFormField } from "@/components/ui/form-field";
 import type { TSupervisor } from "@/types/supervisor";
