@@ -1,105 +1,100 @@
-# Academic Management System
+# ✅ Test_School Competency Assessment Platform
 
-A modern web-based Academic Management System built with React, TypeScript, and shadcn/ui. This system provides comprehensive features for managing students, instructors, courses, academic performance, and job opportunities.
+This is a full-stack digital competency assessment platform designed to evaluate users through a secure, multi-step testing process. The platform assigns a digital competency level (A1–C2) based on performance in progressively challenging tests, generates certification, and ensures exam integrity.
 
-## Features
+---
 
-- **Student Information Management**
+## 🚀 Live Demo
 
-  - Add, update, and view student profiles
-  - Search and filter student information
-  - Secure data storage
+🌐 [Live Site](https://your-deployment-link.com)
 
-- **Instructor Management**
+---
 
-  - Instructor registration with subject assignments
-  - View assigned courses and student lists
-  - Role-based access control
+## 🧰 Tech Stack
 
-- **Course Enrollment**
+### 🔹 Frontend
 
-  - Dynamic course registration
-  - Prerequisite validation
-  - Course management
-
-- **Academic Performance Tracking**
-
-  - Grade assignment and management
-  - Performance history
-  - Excel export functionality
-
-- **Job & Freelance Section**
-  - Job posting and application
-  - Freelance opportunities
-  - Employer dashboard
-
-## Tech Stack
-
-- React 18
-- TypeScript
-- Vite
+- React.js + TypeScript
+- Redux + RTK Query + Axios
 - Tailwind CSS
-- shadcn/ui
-- React Router DOM
+- Redux Persist
 
-## Prerequisites
+### 🔹 Backend
 
-- Node.js 16.x or later
-- npm or yarn
+- Node.js + Express + TypeScript
+- MongoDB + Mongoose
+- JWT Authentication
+- Nodemailer / Twilio (Email/SMS OTP)
 
-## Getting Started
+---
 
-1. Clone the repository:
+## 🧾 Features
 
-   ```bash
-   git clone https://github.com/yourusername/academic-management.git
-   cd academic-management
-   ```
+### 🎯 3-Step Competency Test
 
-2. Install dependencies:
+Each user progresses through 3 stages of tests:
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+#### Step 1 → A1 & A2
 
-3. Start the development server:
+- Score <25% → ❌ Fail (no retake)
+- 25–49.99% → ✅ A1 Certified
+- 50–74.99% → ✅ A2 Certified
+- ≥75% → ✅ A2 Certified + Go to Step 2
 
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+#### Step 2 → B1 & B2
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+- <25% → Stay at A2
+- 25–49.99% → ✅ B1 Certified
+- 50–74.99% → ✅ B2 Certified
+- ≥75% → ✅ B2 Certified + Go to Step 3
 
-## Project Structure
+#### Step 3 → C1 & C2
 
-```
-src/
-├── components/
-│   ├── ui/           # Reusable UI components
-│   └── layout/       # Layout components
-├── pages/            # Page components
-├── lib/              # Utility functions
-└── styles/           # Global styles
-```
+- <25% → Stay at B2
+- 25–49.99% → ✅ C1 Certified
+- ≥50% → ✅ C2 Certified
 
-## Contributing
+### ⏱ Timer System
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- Configurable: default is 1 minute/question
+- Auto-submit on time expiry
 
-## License
+### 📚 Question Pool
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- 132 total questions (22 competencies × 6 levels)
+- 44 questions per step
+- Categorized by competency and level
 
-## Acknowledgments
+### 📜 Certification
 
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
-- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
-- [React](https://reactjs.org/) for the amazing JavaScript library
+- Auto-generated based on final score
+- Downloadable PDF & optional email delivery
+
+---
+
+## 🔐 Authentication & Roles
+
+### 👥 User Roles
+
+- **Admin**: Manages platform
+- **Supervisor**: Reviews & monitors
+- **Student**: Takes the assessment
+
+### 🔑 Auth Features
+
+- JWT Access + Refresh Tokens
+- Registration (with email verification)
+- Secure password hashing (bcrypt)
+- OTP (email/SMS) support for verification/reset
+
+---
+
+## 🛡 Secure Exam Environment (Bonus)
+
+- Safe Exam Browser (SEB) integration
+- Block external navigation/input
+- Enable live video monitoring
+
+---
+
+## 📂 Folder Structure (Frontend & Backend)
