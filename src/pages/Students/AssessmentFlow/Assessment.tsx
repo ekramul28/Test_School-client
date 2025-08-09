@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 import {
   useGetExamByUserAndStepQuery,
@@ -21,7 +20,7 @@ import type { TQuestion } from "@/types/question";
 const AssessmentFlow = () => {
   const user = useAppSelector(selectCurrentUser);
   const navigate = useNavigate();
-
+  console.log("user", user);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -82,7 +81,6 @@ const AssessmentFlow = () => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           handleNext();
-          // Reset timer for next question or default 60
           return questions[currentQuestionIndex + 1]?.durationInSeconds || 60;
         }
         return prev - 1;
@@ -113,7 +111,7 @@ const AssessmentFlow = () => {
   };
 
   const calculateResult = async () => {
-    const percentage = (score / questions.length) * 100;
+    const percentage = Number((score / questions.length) * 100);
 
     let levelResult = {
       level: "A1",
@@ -130,7 +128,7 @@ const AssessmentFlow = () => {
       } else if (percentage < 75) {
         levelResult = { level: "A2", passed: true, canProceed: false };
       } else {
-        levelResult = { level: "A2", passed: true, canProceed: true }; // ≥75% certified + proceed to Step 2
+        levelResult = { level: "A2", passed: true, canProceed: true };
       }
     }
     // Step 2 → Levels B1 & B2
@@ -142,7 +140,7 @@ const AssessmentFlow = () => {
       } else if (percentage < 75) {
         levelResult = { level: "B2", passed: true, canProceed: false };
       } else {
-        levelResult = { level: "B2", passed: true, canProceed: true }; // ≥75% certified + proceed to Step 3
+        levelResult = { level: "B2", passed: true, canProceed: true };
       }
     }
     // Step 3 → Levels C1 & C2
@@ -152,23 +150,29 @@ const AssessmentFlow = () => {
       } else if (percentage < 75) {
         levelResult = { level: "C1", passed: true, canProceed: false };
       } else {
-        levelResult = { level: "C2", passed: true, canProceed: false }; // ≥50% certified (no next step)
+        levelResult = { level: "C2", passed: true, canProceed: false };
       }
     }
 
     setResult(levelResult);
+    const currentStepNumber = Number(currentStep);
+
+    if (!user?.userId) {
+      console.error("User ID is missing.");
+      return;
+    }
+    const payload = {
+      user: user._id,
+      step: currentStepNumber,
+      score: {
+        correctAnswers: Number(score),
+        totalQuestions: questions.length,
+      },
+      certificationLevel: levelResult.level,
+      completed: levelResult.passed,
+    };
 
     try {
-      const payload = {
-        userId: user?.userId,
-        step: currentStep,
-        score,
-        totalQuestions: questions.length,
-        percentage,
-        level: levelResult.level,
-        passed: levelResult.passed,
-      };
-
       if (!existingExam?.data) {
         await createExam(payload).unwrap();
       } else {
@@ -180,12 +184,13 @@ const AssessmentFlow = () => {
 
       if (levelResult.passed) {
         await createCertificate({
-          userId: user?.userId,
-          level: levelResult.level,
+          user: user.userId,
+          certificationLevel: levelResult.level,
+          examStep: currentStepNumber,
         }).unwrap();
       }
     } catch (err) {
-      console.error("Error in saving result:", err);
+      console.error("Error saving result:", err);
     }
   };
 
