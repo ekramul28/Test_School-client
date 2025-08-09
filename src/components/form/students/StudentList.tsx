@@ -226,8 +226,7 @@ const StudentList = ({ onEdit }: StudentListProps) => {
                   <TableHead>ID</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Contact</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Semester</TableHead>
+
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -242,20 +241,7 @@ const StudentList = ({ onEdit }: StudentListProps) => {
                     <TableCell>{student.id}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.contactNo}</TableCell>
-                    <TableCell>
-                      {typeof student?.academicDepartment === "object"
-                        ? student?.academicDepartment?.name || "N/A"
-                        : student?.academicDepartment || "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      {typeof student?.admissionSemester === "object" &&
-                      student?.admissionSemester?.name &&
-                      student?.admissionSemester?.year
-                        ? `${student?.admissionSemester?.name} ${student?.admissionSemester?.year}`
-                        : typeof student?.admissionSemester === "string"
-                        ? student?.admissionSemester
-                        : "N/A"}
-                    </TableCell>
+
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

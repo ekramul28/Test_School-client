@@ -1,5 +1,6 @@
+import AssessmentFlow from "@/pages/Students/AssessmentFlow/Assessment";
 import StudentProfile from "@/pages/Students/StudentProfile";
-import { User } from "lucide-react";
+import { GraduationCap, User } from "lucide-react";
 
 export const studentPaths = [
   {
@@ -7,5 +8,11 @@ export const studentPaths = [
     path: "profile",
     element: <StudentProfile />,
     icon: <User className="w-5 h-5" />,
+  },
+  {
+    name: "assessmentFlow",
+    path: "assessmentFlow",
+    element: <AssessmentFlow />,
+    icon: <GraduationCap className="w-5 h-5" />,
   },
 ];

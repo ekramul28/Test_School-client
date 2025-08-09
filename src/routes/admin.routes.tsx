@@ -24,12 +24,6 @@ export const adminPaths = [
     element: <AdminManagement />,
     icon: <GraduationCap className="w-5 h-5" />,
   },
-  {
-    name: "assessmentFlow",
-    path: "assessmentFlow",
-    element: <AssessmentFlow />,
-    icon: <GraduationCap className="w-5 h-5" />,
-  },
 
   {
     name: "QuestionManagement",
