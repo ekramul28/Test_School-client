@@ -20,10 +20,21 @@ const certificateApi = baseApi.injectEndpoints({
         url: `/certificates/user/${userId}`,
         method: "GET",
       }),
-      transformResponse: (response: TResponseRedux<TCertificate[]>) => {
-        return response.data ?? [];
-      },
+      transformResponse: (response: TResponseRedux<TCertificate[]>) =>
+        response.data ?? [],
       providesTags: ["Certificates"],
+    }),
+
+    // ✅ Send Certificate by Email (POST with body)
+    sendCertificateByEmail: builder.mutation<
+      { success: boolean; message: string },
+      { id: string; email: string }
+    >({
+      query: ({ id, email }) => ({
+        url: `/certificates/${id}/send-email`,
+        method: "POST",
+        body: { email },
+      }),
     }),
 
     // ✅ Delete Certificate
@@ -40,5 +51,6 @@ const certificateApi = baseApi.injectEndpoints({
 export const {
   useCreateCertificateMutation,
   useGetUserCertificatesQuery,
+  useSendCertificateByEmailMutation, // <-- New hook
   useDeleteCertificateMutation,
 } = certificateApi;
