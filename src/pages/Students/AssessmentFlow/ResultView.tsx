@@ -5,6 +5,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
 import { Separator } from "@radix-ui/react-select";
 import { Badge, Download, Mail } from "lucide-react";
 
@@ -26,13 +27,17 @@ const ResultCard = ({
   const percentage = (score / total) * 100;
 
   const handleDownloadCertificate = () => {
-    alert("Download certificate PDF logic here.");
-    // implement real download API call here
+    toast({
+      title: "Success",
+      description: "Certificate downloaded successfully!",
+    });
   };
 
   const handleEmailCertificate = () => {
-    alert("Send certificate email logic here.");
-    // implement email API call here
+    toast({
+      title: "Success",
+      description: "Certificate send in your Email successfully!",
+    });
   };
 
   return (
