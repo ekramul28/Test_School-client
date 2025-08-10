@@ -9,5 +9,6 @@ export type TExam = {
   status: "passed" | "failed";
   createdAt: string;
   updatedAt: string;
+  data: any;
   // Add more if needed
 };

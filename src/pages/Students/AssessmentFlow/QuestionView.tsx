@@ -11,18 +11,18 @@ import { Clock, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-interface Question {
-  _id?: string;
-  questionText?: string;
-  options: string[];
-  correctAnswer: string | number | null;
-  level?: string;
-  competency?: string;
-  durationInSeconds?: number;
-}
+// interface Question {
+//   _id?: string;
+//   questionText?: string;
+//   options: string[];
+//   correctAnswer: string | number | null;
+//   level?: string;
+//   competency?: string;
+//   durationInSeconds?: number;
+// }
 
 interface QuestionCardProps {
-  question: Question;
+  question: any;
   index: number;
   total: number;
   selectedAnswer: string | null;
@@ -177,11 +177,11 @@ const QuestionCard = ({
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                {question.questionText}
+                {question?.questionText}
               </motion.h2>
 
               <div className="grid gap-3">
-                {question.options.map((option, i) => {
+                {question.options.map((option: any, i: any) => {
                   const isSelected = selectedAnswer === option;
                   return (
                     <motion.button

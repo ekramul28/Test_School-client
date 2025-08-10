@@ -54,8 +54,8 @@ export function NotFoundPage() {
           <Button
             onClick={() => navigate("/")}
             className="mt-6"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            // whileHover={{ scale: 1.05 }}
+            // whileTap={{ scale: 0.95 }}
           >
             Go Back Home
           </Button>

@@ -28,7 +28,7 @@ const AssessmentFlow = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState<any>(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [result, setResult] = useState<null | {
@@ -72,7 +72,7 @@ const AssessmentFlow = () => {
     { userId: user?._id || "", step: currentStep },
     { skip: !user?._id }
   );
-  console.log("existingExam", existingExam);
+
   // Mutations
   const [createCertificate] = useCreateCertificateMutation();
   const [createExam] = useCreateExamMutation();
@@ -89,7 +89,7 @@ const AssessmentFlow = () => {
     if (isCompleted || hasSubmitted || !stepQuestions.length) return;
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
+      setTimeLeft((prev: any) => {
         if (prev <= 1) {
           handleNext();
           return (
@@ -193,7 +193,7 @@ const AssessmentFlow = () => {
         await createExam(payload).unwrap();
       } else {
         await updateExam({
-          id: existingExam._id,
+          id: existingExam?.data?._id,
           data: payload,
         }).unwrap();
       }
