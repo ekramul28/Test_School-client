@@ -55,14 +55,14 @@ type TQuestion = {
 };
 
 const ITEMS_PER_PAGE = 10;
-const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+const LEVELS = ["A2", "B1", "B2", "C1", "C2"] as const;
 
 const QuestionManagement = () => {
   // State for modal and form
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLevel, setSelectedLevel] = useState<string>("all");
+  const [selectedLevel, setSelectedLevel] = useState<string>("A1");
 
   // Redux API hooks
   const queryParams = [
@@ -206,7 +206,7 @@ const QuestionManagement = () => {
                   <SelectValue placeholder="Filter by level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
+                  <SelectItem value="A1">Levels A1</SelectItem>
                   {LEVELS.map((level) => (
                     <SelectItem key={level} value={level}>
                       Level {level}
