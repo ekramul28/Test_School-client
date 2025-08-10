@@ -15,11 +15,21 @@ const certificateApi = baseApi.injectEndpoints({
     }),
 
     // ✅ Get Certificates by User
-    getUserCertificates: builder.query<TCertificate[], string>({
-      query: (userId) => ({
-        url: `/certificates/user/${userId}`,
-        method: "GET",
-      }),
+    getUserCertificates: builder.query<
+      TCertificate[],
+      { userId: string; currentStep?: number }
+    >({
+      query: ({ userId, currentStep }) => {
+        const params = new URLSearchParams();
+        if (currentStep !== undefined) {
+          params.append("examStep", currentStep.toString());
+        }
+        return {
+          url: `/certificates/user/${userId}`,
+          method: "GET",
+          params,
+        };
+      },
       transformResponse: (response: TResponseRedux<TCertificate[]>) =>
         response.data ?? [],
       providesTags: ["Certificates"],

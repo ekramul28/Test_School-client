@@ -44,13 +44,12 @@ const AssessmentFlow = () => {
     3: ["C1", "C2"],
   };
 
-  // Levels for current step
-  const levels = stepLevelsMap[currentStep];
-
   // Prepare query params for API
-  let queryParams = levels.map((level) => ({ name: "level", value: level }));
-
-  queryParams.push({ name: "limit", value: "44" });
+  let queryParams = stepLevelsMap[currentStep].map((level) => ({
+    name: "level",
+    value: level,
+  }));
+  queryParams.push({ name: "limit", value: "4" });
 
   // Fetch filtered questions from backend
   const {
@@ -60,32 +59,26 @@ const AssessmentFlow = () => {
     error,
   } = useGetAllQuestionsQuery(queryParams);
 
-  // Current step levels memoized
-  const currentStepLevels = useMemo(
-    () => stepLevelsMap[currentStep],
-    [currentStep]
-  );
-
-  // Client-side filter for extra safety (questionsResponse.data may be undefined)
+  // Client-side filter for questions
   const stepQuestions = useMemo(() => {
     if (!questionsResponse?.data) return [];
     return questionsResponse.data.filter((q: TQuestion) =>
-      currentStepLevels.includes(q.level)
+      stepLevelsMap[currentStep].includes(q.level)
     );
-  }, [questionsResponse, currentStepLevels]);
+  }, [questionsResponse, currentStep]);
 
   // Get existing exam for user & step
   const { data: existingExam } = useGetExamByUserAndStepQuery(
     { userId: user?._id || "", step: currentStep },
     { skip: !user?._id }
   );
-
+  console.log("existingExam", existingExam);
   // Mutations
   const [createCertificate] = useCreateCertificateMutation();
   const [createExam] = useCreateExamMutation();
   const [updateExam] = useUpdateExamMutation();
 
-  // Timer reset on question or other conditions change
+  // Timer reset on question change
   useEffect(() => {
     if (!stepQuestions.length || isCompleted || hasSubmitted) return;
     setTimeLeft(stepQuestions[currentQuestionIndex]?.durationInSeconds || 60);
@@ -99,7 +92,6 @@ const AssessmentFlow = () => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           handleNext();
-          // Reset timer for next question or default 60s
           return (
             stepQuestions[currentQuestionIndex + 1]?.durationInSeconds || 60
           );
@@ -134,38 +126,48 @@ const AssessmentFlow = () => {
     }
   };
 
-  // Result calculation & API calls
+  // Result calculation logic
   const calculateResult = async () => {
     const percentage = (score / stepQuestions.length) * 100;
-
     let levelResult = {
       level: "A1",
       passed: false,
       canProceed: false,
     };
 
+    // Step 1 → Levels A1 & A2
     if (currentStep === 1) {
-      if (percentage < 25)
-        levelResult = { level: "A1", passed: false, canProceed: false };
-      else if (percentage < 50)
-        levelResult = { level: "A1", passed: true, canProceed: false };
-      else if (percentage < 75)
-        levelResult = { level: "A2", passed: true, canProceed: false };
-      else levelResult = { level: "A2", passed: true, canProceed: true };
-    } else if (currentStep === 2) {
-      if (percentage < 25)
-        levelResult = { level: "A2", passed: false, canProceed: false };
-      else if (percentage < 50)
-        levelResult = { level: "B1", passed: true, canProceed: false };
-      else if (percentage < 75)
-        levelResult = { level: "B2", passed: true, canProceed: false };
-      else levelResult = { level: "B2", passed: true, canProceed: true };
-    } else if (currentStep === 3) {
-      if (percentage < 50)
-        levelResult = { level: "B2", passed: false, canProceed: false };
-      else if (percentage < 75)
-        levelResult = { level: "C1", passed: true, canProceed: false };
-      else levelResult = { level: "C2", passed: true, canProceed: false };
+      if (percentage < 25) {
+        levelResult = { level: "A1", passed: false, canProceed: false }; // Fail, no retake allowed
+      } else if (percentage < 50) {
+        levelResult = { level: "A1", passed: true, canProceed: false }; // A1 certified
+      } else if (percentage < 75) {
+        levelResult = { level: "A2", passed: true, canProceed: false }; // A2 certified
+      } else {
+        levelResult = { level: "A2", passed: true, canProceed: true }; // A2 certified + Proceed to Step 2
+      }
+    }
+    // Step 2 → Levels B1 & B2
+    else if (currentStep === 2) {
+      if (percentage < 25) {
+        levelResult = { level: "A2", passed: false, canProceed: false }; // Remain at A2
+      } else if (percentage < 50) {
+        levelResult = { level: "B1", passed: true, canProceed: false }; // B1 certified
+      } else if (percentage < 75) {
+        levelResult = { level: "B2", passed: true, canProceed: false }; // B2 certified
+      } else {
+        levelResult = { level: "B2", passed: true, canProceed: true }; // B2 certified + Proceed to Step 3
+      }
+    }
+    // Step 3 → Levels C1 & C2
+    else if (currentStep === 3) {
+      if (percentage < 25) {
+        levelResult = { level: "B2", passed: false, canProceed: false }; // Remain at B2
+      } else if (percentage < 50) {
+        levelResult = { level: "C1", passed: true, canProceed: false }; // C1 certified
+      } else {
+        levelResult = { level: "C2", passed: true, canProceed: false }; // C2 certified
+      }
     }
 
     setResult(levelResult);
@@ -187,7 +189,7 @@ const AssessmentFlow = () => {
     };
 
     try {
-      if (!existingExam) {
+      if (!existingExam?.data) {
         await createExam(payload).unwrap();
       } else {
         await updateExam({
@@ -208,7 +210,7 @@ const AssessmentFlow = () => {
     }
   };
 
-  // Restart quiz (reload page)
+  // Restart quiz
   const handleRestart = () => window.location.reload();
 
   // Proceed to next step
