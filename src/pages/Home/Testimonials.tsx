@@ -5,44 +5,44 @@ import { motion } from "framer-motion";
 const testimonials = [
   {
     id: 1,
-    name: "Tanisha Rahman",
-    year: "3rd Year, CSE",
-    text: "Tracking lab submissions and getting reminders for project deadlines really helped me stay on top during my semester at BUET.",
+    name: "Tahmina Akter",
+    level: "Achieved C2 Certification",
+    text: "The 3-step assessment perfectly evaluated my digital skills. The automatic certification saved me so much time compared to traditional exams!",
     image: "https://randomuser.me/api/portraits/women/45.jpg",
   },
   {
     id: 2,
-    name: "Zayed Karim",
-    year: "Final Year, CSE",
-    text: "I landed a freelance frontend gig through the job board and managed it alongside my final year thesis at IUT.",
+    name: "Rahim Khan",
+    level: "B2 Certified Developer",
+    text: "The secure browser and timer system made the test feel professional. I appreciated the clear progression from A1 to C2 levels.",
     image: "https://randomuser.me/api/portraits/men/47.jpg",
   },
   {
     id: 3,
-    name: "Maliha Noor",
-    year: "2nd Year, CSE",
-    text: "The UI is super clean, and having all my class schedules, CGPA, and assignments in one place felt like a digital routine diary!",
+    name: "Nusrat Jahan",
+    level: "A2 to B1 Progress",
+    text: "After failing Step 1 initially, the system clearly showed where I needed improvement. Six months later I passed with B1 certification!",
     image: "https://randomuser.me/api/portraits/women/48.jpg",
   },
   {
     id: 4,
-    name: "Asif Mahmud",
-    year: "4th Year, CSE",
-    text: "From tracking software engineering project deadlines to finding remote internships—it’s my everyday companion at SUST.",
+    name: "Arif Mahmood",
+    level: "C1 Certified Professional",
+    text: "The question pool covered all 22 competencies thoroughly. My certificate helped me land a digital marketing manager position.",
     image: "https://randomuser.me/api/portraits/men/49.jpg",
   },
   {
     id: 5,
-    name: "Shahrin Alam",
-    year: "1st Year, CSE",
-    text: "As a fresher at RUET, this platform guided me through my very first semester with clarity and less stress.",
+    name: "Samina Chowdhury",
+    level: "A1 Certification",
+    text: "As a beginner, the A1 assessment was perfectly challenging. The instant results and certification motivated me to continue learning.",
     image: "https://randomuser.me/api/portraits/women/46.jpg",
   },
   {
     id: 6,
-    name: "Fahim Uddin",
-    year: "3rd Year, CSE",
-    text: "It’s not just a dashboard—it feels like a CSE-specific productivity tool built for Bangladeshi students.",
+    name: "Jamal Uddin",
+    level: "B2 to C1 Upgrade",
+    text: "The detailed feedback after each step showed exactly which competencies I needed to work on. The retake policy is fair and prevents cheating.",
     image: "https://randomuser.me/api/portraits/men/50.jpg",
   },
 ];
@@ -53,9 +53,8 @@ const Testimonials = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <SectionHeader
-            title="   Student Success Stories"
-            subtitle="  Real voices from university students across Bangladesh who are
-            thriving academically and professionally."
+            title="Certification Success Stories"
+            subtitle="Hear from learners who have improved their digital competencies and advanced through our assessment levels"
           />
         </div>
 
@@ -79,8 +78,8 @@ const Testimonials = () => {
                     <CardTitle className="text-base font-semibold text-gray-900 dark:text-white mb-0">
                       {testimonial.name}
                     </CardTitle>
-                    <span className="text-sm text-muted-foreground">
-                      {testimonial.year}
+                    <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                      {testimonial.level}
                     </span>
                   </div>
                 </CardHeader>

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, Award, Clock, ShieldCheck, BarChart2 } from "lucide-react";
 
-const reviews = [
+const testimonials = [
   {
     top: "10%",
     left: "5%",
     size: "text-xs",
     delay: 0,
-    text: "Time Saver",
+    text: "Accurate Assessment",
     img: "https://randomuser.me/api/portraits/men/11.jpg",
   },
   {
@@ -16,7 +16,7 @@ const reviews = [
     right: "5%",
     size: "text-xs",
     delay: 0.5,
-    text: "Well Organized",
+    text: "Great Certification",
     img: "https://randomuser.me/api/portraits/women/12.jpg",
   },
   {
@@ -24,7 +24,7 @@ const reviews = [
     left: "8%",
     size: "text-xs",
     delay: 0.8,
-    text: "Great UI",
+    text: "Clear Levels",
     img: "https://randomuser.me/api/portraits/men/13.jpg",
   },
   {
@@ -32,7 +32,7 @@ const reviews = [
     right: "8%",
     size: "text-xs",
     delay: 0.6,
-    text: "Super Fast",
+    text: "Secure Platform",
     img: "https://randomuser.me/api/portraits/women/14.jpg",
   },
   {
@@ -40,7 +40,7 @@ const reviews = [
     left: "6%",
     size: "text-xs",
     delay: 1.1,
-    text: "Easy Access",
+    text: "Fair Evaluation",
     img: "https://randomuser.me/api/portraits/men/15.jpg",
   },
   {
@@ -48,7 +48,7 @@ const reviews = [
     right: "6%",
     size: "text-xs",
     delay: 1.3,
-    text: "Best Support",
+    text: "Progressive Steps",
     img: "https://randomuser.me/api/portraits/women/16.jpg",
   },
   {
@@ -56,7 +56,7 @@ const reviews = [
     left: "10%",
     size: "text-xs",
     delay: 0.9,
-    text: "Bug Free",
+    text: "Detailed Feedback",
     img: "https://randomuser.me/api/portraits/men/17.jpg",
   },
   {
@@ -64,7 +64,7 @@ const reviews = [
     right: "10%",
     size: "text-xs",
     delay: 1.4,
-    text: "Efficient",
+    text: "Trusted Results",
     img: "https://randomuser.me/api/portraits/women/18.jpg",
   },
   {
@@ -72,7 +72,7 @@ const reviews = [
     left: "5%",
     size: "text-xs",
     delay: 0.7,
-    text: "CSE Friendly",
+    text: "A1 to C2 Path",
     img: "https://randomuser.me/api/portraits/men/19.jpg",
   },
   {
@@ -80,7 +80,7 @@ const reviews = [
     right: "5%",
     size: "text-xs",
     delay: 1.5,
-    text: "Highly Recommended",
+    text: "Industry Standard",
     img: "https://randomuser.me/api/portraits/women/20.jpg",
   },
 ];
@@ -88,16 +88,16 @@ const reviews = [
 export default function Hero() {
   return (
     <section className="relative w-full overflow-hidden h-[100vh] bg-background font-roboto py-20 transition-colors">
-      {/* Floating Reviews with profile image and English text */}
-      {reviews.map((review, index) => (
+      {/* Floating Testimonials */}
+      {testimonials.map((testimonial, index) => (
         <motion.div
           key={index}
-          className={`absolute select-none rounded-full bg-white/90 dark:bg-gray-800/90 shadow-md px-3 py-1 flex items-center gap-2 ${review.size} font-semibold text-gray-800 dark:text-gray-200`}
+          className={`absolute select-none rounded-full bg-white/90 dark:bg-gray-800/90 shadow-md px-3 py-1 flex items-center gap-2 ${testimonial.size} font-semibold text-gray-800 dark:text-gray-200`}
           style={{
-            top: review.top,
-            left: review.left,
-            right: review.right,
-            bottom: review.bottom,
+            top: testimonial.top,
+            left: testimonial.left,
+            right: testimonial.right,
+            bottom: testimonial.bottom,
             userSelect: "none",
             pointerEvents: "none",
             whiteSpace: "nowrap",
@@ -109,52 +109,76 @@ export default function Hero() {
             repeat: Infinity,
             repeatType: "reverse",
             ease: "easeInOut",
-            delay: review.delay,
+            delay: testimonial.delay,
           }}
         >
           <img
-            src={review.img}
-            alt="Student"
+            src={testimonial.img}
+            alt="User"
             className="w-6 h-6 rounded-full object-cover border border-gray-300 dark:border-gray-600"
             loading="lazy"
           />
-          {review.text}
+          {testimonial.text}
         </motion.div>
       ))}
 
       {/* Main Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-        <motion.h1 className="text-xl md:text-3xl font-extrabold text-card-foreground mb-4">
-          Streamline Academic Management <br /> with Confidence
+        <motion.h1 className="text-3xl md:text-5xl font-extrabold text-card-foreground mb-6">
+          Assess Your Digital Competency <br />
+          From <span className="text-blue-600">A1 to C2</span> Levels
         </motion.h1>
 
         <motion.p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-          Simplify course administration, monitor student progress, and enhance
-          collaboration — all in one powerful platform.
+          Certified 3-step evaluation process with secure browser technology and
+          automatic certification based on your performance.
         </motion.p>
 
-        {/* Email Input + Button */}
+        {/* Features Grid */}
         <motion.div
-          className="flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap max-w-xl mx-auto"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-2xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="bg-card p-4 rounded-lg shadow-sm border">
+            <Award className="mx-auto mb-2 text-blue-600" size={24} />
+            <p className="text-sm font-medium">3-Step Certification</p>
+          </div>
+          <div className="bg-card p-4 rounded-lg shadow-sm border">
+            <Clock className="mx-auto mb-2 text-blue-600" size={24} />
+            <p className="text-sm font-medium">Timed Assessments</p>
+          </div>
+          <div className="bg-card p-4 rounded-lg shadow-sm border">
+            <ShieldCheck className="mx-auto mb-2 text-blue-600" size={24} />
+            <p className="text-sm font-medium">Secure Testing</p>
+          </div>
+          <div className="bg-card p-4 rounded-lg shadow-sm border">
+            <BarChart2 className="mx-auto mb-2 text-blue-600" size={24} />
+            <p className="text-sm font-medium">Detailed Analytics</p>
+          </div>
+        </motion.div>
+
+        {/* CTA Buttons */}
+        <motion.div
+          className="flex items-center justify-center gap-4 flex-wrap"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <div className="flex items-center w-full sm:w-auto bg-card px-4 py-3 rounded-full shadow-md border text-foreground">
-            <Search className="text-muted-foreground mr-2" size={20} />
-            <input
-              type="search"
-              placeholder="Find your dreams!"
-              className="outline-none text-sm bg-transparent w-full placeholder:text-muted-foreground text-foreground"
-            />
-          </div>
-          <Button className="rounded-full px-6 font-medium mt-4 md:-mt-0">
-            Explore
+          <Button className="rounded-full px-8 py-6 text-md font-medium">
+            Start Assessment
+          </Button>
+          <Button
+            variant="outline"
+            className="rounded-full px-8 py-6 text-md font-medium"
+          >
+            Learn About Levels
           </Button>
         </motion.div>
       </div>
 
-      {/* Bottom Illustration and Curve */}
+      {/* Bottom Illustration */}
       <div className="absolute bottom-0 left-0 w-full">
         <svg
           className="w-full h-32 md:h-60"
