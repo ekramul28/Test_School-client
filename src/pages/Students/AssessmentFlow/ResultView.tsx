@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  useDownloadCertificateByPdfMutation,
   useGetUserCertificatesQuery,
   useSendCertificateByEmailMutation,
 } from "@/redux/features/certificate/certificateApi";
@@ -31,7 +32,7 @@ const ResultCard = ({
   onProceed,
   onReturn,
 }: {
-  userId: string;
+  userId: string | undefined;
   result: { level: string; passed: boolean; canProceed: boolean };
   score: number;
   total: number;
@@ -40,11 +41,13 @@ const ResultCard = ({
   onReturn: () => void;
 }) => {
   const percentage = (score / total) * 100;
+  console.log(userId);
 
   // Fetch user's certificates
-  const { data: certificates } = useGetUserCertificatesQuery(userId);
-
-  // Mutation hook for sending certificate by email
+  const { data: certificates } = useGetUserCertificatesQuery(userId as string);
+  console.log("certificates", certificates);
+  // Mutation hooks
+  const [downloadCertificateByPdf] = useDownloadCertificateByPdfMutation();
   const [sendCertificateByEmail, { isLoading: isEmailing }] =
     useSendCertificateByEmailMutation();
 
@@ -52,7 +55,7 @@ const ResultCard = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
 
-  const handleDownloadCertificate = () => {
+  const handleDownloadCertificate = async () => {
     if (!certificates || certificates.length === 0) {
       toast({
         title: "Error",
@@ -62,14 +65,31 @@ const ResultCard = ({
       return;
     }
 
-    toast({
-      title: "Success",
-      description: "Certificate downloaded successfully!",
-    });
-  };
+    try {
+      const certId = certificates[0]._id;
+      const blob = await downloadCertificateByPdf(certId).unwrap();
 
-  const handleOpenEmailModal = () => {
-    setIsModalOpen(true);
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "certificate.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Success",
+        description: "Certificate downloaded successfully!",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to download certificate.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSendEmail = async () => {
@@ -159,7 +179,7 @@ const ResultCard = ({
 
             <Card
               className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={handleOpenEmailModal}
+              onClick={() => setIsModalOpen(true)}
             >
               <CardHeader className="pb-2">
                 <h3 className="text-lg flex items-center gap-2">

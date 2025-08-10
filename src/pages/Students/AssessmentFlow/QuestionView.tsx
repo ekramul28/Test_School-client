@@ -11,7 +11,7 @@ import { Clock } from "lucide-react";
 
 interface Question {
   _id?: string;
-  questionText: string;
+  questionText?: string;
   options: string[];
   correctAnswer: string | number | null;
   level?: string;

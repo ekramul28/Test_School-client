@@ -184,7 +184,7 @@ const AssessmentFlow = () => {
 
       if (levelResult.passed) {
         await createCertificate({
-          user: user.userId,
+          userId: user._id,
           certificationLevel: levelResult.level,
           examStep: currentStepNumber,
         }).unwrap();
@@ -214,6 +214,7 @@ const AssessmentFlow = () => {
   if (isCompleted && result)
     return (
       <ResultCard
+        userId={user?._id}
         result={result}
         score={score}
         total={questions.length}

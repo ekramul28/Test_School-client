@@ -25,7 +25,7 @@ const certificateApi = baseApi.injectEndpoints({
       providesTags: ["Certificates"],
     }),
 
-    // ✅ Send Certificate by Email (POST with body)
+    // ✅ Send Certificate by Email
     sendCertificateByEmail: builder.mutation<
       { success: boolean; message: string },
       { id: string; email: string }
@@ -34,6 +34,17 @@ const certificateApi = baseApi.injectEndpoints({
         url: `/certificates/${id}/send-email`,
         method: "POST",
         body: { email },
+      }),
+      invalidatesTags: ["Certificates"],
+    }),
+
+    // ✅ Download Certificate PDF
+    downloadCertificateByPdf: builder.mutation<Blob, string>({
+      query: (id) => ({
+        url: `/certificates/${id}`,
+        // method: "GET", // 🔄 Changed to GET unless backend needs POST
+        responseHandler: (response) => response.blob(),
+        cache: "no-store",
       }),
     }),
 
@@ -51,6 +62,7 @@ const certificateApi = baseApi.injectEndpoints({
 export const {
   useCreateCertificateMutation,
   useGetUserCertificatesQuery,
-  useSendCertificateByEmailMutation, // <-- New hook
+  useSendCertificateByEmailMutation,
+  useDownloadCertificateByPdfMutation,
   useDeleteCertificateMutation,
 } = certificateApi;
