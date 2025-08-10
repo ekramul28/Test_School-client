@@ -48,16 +48,30 @@ const certificateApi = baseApi.injectEndpoints({
       invalidatesTags: ["Certificates"],
     }),
 
-    // ✅ Download Certificate PDF
-    downloadCertificateByPdf: builder.mutation<Blob, string>({
+    // ✅ Download Certificate PDF - Complete Solution
+    downloadCertificateByPdf: builder.mutation<
+      Blob, // Success response type
+      string // Certificate ID parameter
+    >({
       query: (id) => ({
-        url: `/certificates/${id}`,
-        // method: "GET", // 🔄 Changed to GET unless backend needs POST
-        responseHandler: (response) => response.blob(),
+        url: `certificates/${id}`,
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            // Handle error responses
+            const error = await response.json();
+            throw error;
+          }
+          return response.blob();
+        },
         cache: "no-store",
       }),
+      transformErrorResponse: (response) => {
+        // Already parsed by responseHandler
+        return response;
+      },
+      // Disable serialization check for this endpoint
+      extraOptions: { serializable: false },
     }),
-
     // ✅ Delete Certificate
     deleteCertificate: builder.mutation({
       query: (id: string) => ({

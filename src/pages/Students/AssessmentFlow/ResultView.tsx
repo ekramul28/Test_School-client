@@ -76,27 +76,37 @@ const ResultCard = ({
 
     try {
       const certId = certificates[0]._id;
-      const blob = await downloadCertificateByPdf(certId).unwrap();
 
-      const url = window.URL.createObjectURL(blob);
+      const pdfBlob = await downloadCertificateByPdf(certId).unwrap();
+
+      // Create download link
+      const url = window.URL.createObjectURL(pdfBlob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "certificate.pdf";
+      a.download = `certificate-${certId}.pdf`;
       document.body.appendChild(a);
       a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
 
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
       toast({
         title: "Success",
         description: "Certificate downloaded successfully!",
       });
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to download certificate.",
-        variant: "destructive",
-      });
+    } catch (error: any) {
+      // Handle JSON error response
+      if (error.data && typeof error.data === "object") {
+        toast(error.data.message || "Download failed");
+      } else {
+        toast({
+          title: "error",
+          description: "Certificate downloaded fell!",
+        });
+      }
+      console.error("Download error:", error);
     }
   };
 

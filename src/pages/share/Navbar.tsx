@@ -13,37 +13,27 @@ import { Menu, Moon, Sun, User } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const getNavLinks = (role?: string) => {
-  const commonLinks = [
-    { label: "Home", to: "/" },
-    { label: "Courses", to: "/courses" },
-    { label: "Jobs", to: "/jobs" },
-    { label: "Blogs", to: "/blogs" },
-  ];
+const MotionWrapper: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+    {children}
+  </motion.div>
+);
 
+const getNavLinks = (role?: string) => {
+  const commonLinks = [{ label: "Home", to: "/" }];
   switch (role) {
     case "student":
+      return [...commonLinks, { label: "Dashboard", to: "/student/dashboard" }];
+    case "supervisor":
       return [
         ...commonLinks,
-        { label: "Dashboard", to: "/student/dashboard" },
-        { label: "My Courses", to: "/student/my-courses" },
-        { label: "Grades", to: "/student/grades" },
-      ];
-    case "faculty":
-      return [
-        ...commonLinks,
-        { label: "Dashboard", to: "/faculty/dashboard" },
-        { label: "My Classes", to: "/faculty/classes" },
-        { label: "Grade Management", to: "/faculty/grades" },
+        { label: "Dashboard", to: "/supervisor/dashboard" },
       ];
     case "admin":
-    case "superAdmin":
-      return [
-        ...commonLinks,
-        { label: "Dashboard", to: "/admin/dashboard" },
-        { label: "Students", to: "/students" },
-        { label: "faculty", to: "/faculty" },
-      ];
+    case "superadmin":
+      return [...commonLinks, { label: "Dashboard", to: "/admin/dashboard" }];
     default:
       return commonLinks;
   }
@@ -56,11 +46,9 @@ export default function NavBar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const navLinks = getNavLinks(user?.role);
-
-  console.log(user);
-  const role = user?.role?.toLowerCase(); // assuming roles are like "Admin", "Student", etc.
-  const profileLink = role ? `/${role}/profile` : "/profile"; // fallback
+  const navLinks = getNavLinks(user?.role?.toLowerCase());
+  const role = user?.role?.toLowerCase();
+  const profileLink = role ? `/${role}/profile` : "/profile";
 
   const handleLogout = () => {
     dispatch(logout());
@@ -70,7 +58,7 @@ export default function NavBar() {
 
   return (
     <motion.header
-      className="bg-white dark:bg-gray-900  fixed w-full z-50 top-0"
+      className="bg-white dark:bg-gray-900 fixed w-full z-50 top-0"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -78,24 +66,24 @@ export default function NavBar() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <MotionWrapper>
             <Link
               to="/"
               className="text-2xl font-extrabold tracking-wide text-[#3F4555] dark:text-blue-400 hover:text-blue-600 transition-colors duration-300 flex items-center gap-1"
             >
-              <span>📚</span> AcademicMS
+              <img
+                src="src/assets/logo.jpg"
+                alt="Test_School Logo"
+                className="h-14  w-auto"
+              />
             </Link>
-          </motion.div>
+          </MotionWrapper>
 
-          {/* Desktop Navigation - Centered */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center justify-center flex-1 mx-8">
             <div className="flex space-x-6">
               {navLinks.map((link) => (
-                <motion.div
-                  key={link.to}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                <MotionWrapper key={link.to}>
                   <Link
                     to={link.to}
                     className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
@@ -106,17 +94,18 @@ export default function NavBar() {
                   >
                     {link.label}
                   </Link>
-                </motion.div>
+                </MotionWrapper>
               ))}
             </div>
           </nav>
 
           <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <MotionWrapper>
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Toggle theme"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="text-gray-600 dark:text-gray-300"
               >
@@ -126,27 +115,24 @@ export default function NavBar() {
                   <Moon className="h-5 w-5" />
                 )}
               </Button>
-            </motion.div>
+            </MotionWrapper>
 
-            {/* Auth Buttons or User Menu */}
+            {/* Auth */}
             {user ? (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              <MotionWrapper>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="User menu"
                       className="text-gray-600 dark:text-gray-300"
                     >
                       <User className="h-5 w-5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="dark:bg-gray-800">
-                    <DropdownMenuItem className="dark:text-gray-300">
-                      {/* <Link to="//profile">Profile</Link> */}
+                    <DropdownMenuItem>
                       <Link
                         to={profileLink}
                         className="text-sm text-primary hover:underline"
@@ -154,48 +140,37 @@ export default function NavBar() {
                         Profile
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="dark:text-gray-300">
+                    <DropdownMenuItem>
                       <Link to="/settings">Settings</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="dark:text-gray-300"
-                      onClick={handleLogout}
-                    >
+                    <DropdownMenuItem onClick={handleLogout}>
                       Logout
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </motion.div>
+              </MotionWrapper>
             ) : (
-              <div className="flex items-center space-x-2">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link to="/login">
-                    <Button
-                      variant="ghost"
-                      className="text-gray-600 dark:text-gray-300"
-                    >
-                      Login
-                    </Button>
-                  </Link>
-                </motion.div>
-              </div>
+              <MotionWrapper>
+                <Link to="/login">
+                  <Button
+                    variant="ghost"
+                    className="text-gray-600 dark:text-gray-300"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </MotionWrapper>
             )}
 
             {/* Mobile Menu */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="md:hidden"
-            >
+            <MotionWrapper>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-600 dark:text-gray-300"
+                    aria-label="Mobile menu"
+                    className="md:hidden text-gray-600 dark:text-gray-300"
                   >
                     <Menu className="h-5 w-5" />
                   </Button>
@@ -205,10 +180,7 @@ export default function NavBar() {
                   className="w-48 dark:bg-gray-800"
                 >
                   {navLinks.map((link) => (
-                    <DropdownMenuItem
-                      key={link.to}
-                      className="dark:text-gray-300"
-                    >
+                    <DropdownMenuItem key={link.to}>
                       <Link
                         to={link.to}
                         className={`w-full ${
@@ -222,17 +194,15 @@ export default function NavBar() {
                     </DropdownMenuItem>
                   ))}
                   {!user && (
-                    <>
-                      <DropdownMenuItem className="dark:text-gray-300">
-                        <Link to="/login" className="w-full">
-                          Login
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
+                    <DropdownMenuItem>
+                      <Link to="/login" className="w-full">
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
-            </motion.div>
+            </MotionWrapper>
           </div>
         </div>
       </div>
