@@ -19,6 +19,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 const loginSchema = z.object({
+  email: z.string().optional(),
   id: z.string().nonempty("ID is required"),
   password: z
     .string()
@@ -58,9 +59,9 @@ export default function LoginForm() {
         toast.success("Login successful");
 
         if (res.data.needsPasswordChange) {
-          navigate(`/change-password`);
+          navigate(`/`);
         } else {
-          navigate(`/${user.role}/dashboard`);
+          navigate(`/`);
         }
       }
     } catch (error) {
@@ -213,7 +214,7 @@ export default function LoginForm() {
                     type="button"
                     variant="outline"
                     onClick={() =>
-                      demoLogin({ id: "A-0001", password: "Admin@123" })
+                      demoLogin({ id: "0001", password: "admin12345" })
                     }
                     className="text-xs h-10"
                     disabled={isLoading}
@@ -248,8 +249,8 @@ export default function LoginForm() {
 
             {activeTab === "forgot" && (
               <form
-                onSubmit={handleSubmit((data) =>
-                  handleForgotPassword(data.email)
+                onSubmit={handleSubmit((data: any) =>
+                  handleForgotPassword(data?.email)
                 )}
                 className="space-y-6"
               >

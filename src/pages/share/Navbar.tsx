@@ -25,7 +25,10 @@ const getNavLinks = (role?: string) => {
   const commonLinks = [{ label: "Home", to: "/" }];
   switch (role) {
     case "student":
-      return [...commonLinks, { label: "Dashboard", to: "/student/dashboard" }];
+      return [
+        ...commonLinks,
+        { label: "Dashboard", to: "/student/assessmentFlow" },
+      ];
     case "supervisor":
       return [
         ...commonLinks,
@@ -33,7 +36,10 @@ const getNavLinks = (role?: string) => {
       ];
     case "admin":
     case "superadmin":
-      return [...commonLinks, { label: "Dashboard", to: "/admin/dashboard" }];
+      return [
+        ...commonLinks,
+        { label: "Dashboard", to: "/admin/questionmanagement" },
+      ];
     default:
       return commonLinks;
   }
