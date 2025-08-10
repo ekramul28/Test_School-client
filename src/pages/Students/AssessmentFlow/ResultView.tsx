@@ -42,7 +42,7 @@ const ResultCard = ({
 }) => {
   const percentage = (score / total) * 100;
   console.log(userId);
-
+  console.log("this is result", result);
   // Fetch user's certificates
   const { data: certificates } = useGetUserCertificatesQuery(userId as string);
   console.log("certificates", certificates);
@@ -158,42 +158,43 @@ const ResultCard = ({
           </div>
 
           <Separator />
+          {result.passed && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={handleDownloadCertificate}
+              >
+                <CardHeader className="pb-2">
+                  <h3 className="text-lg flex items-center gap-2">
+                    <Download className="h-5 w-5 text-blue-600" />
+                    Download Certificate
+                  </h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">
+                    Get your official digital certificate in PDF format.
+                  </p>
+                </CardContent>
+              </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card
-              className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={handleDownloadCertificate}
-            >
-              <CardHeader className="pb-2">
-                <h3 className="text-lg flex items-center gap-2">
-                  <Download className="h-5 w-5 text-blue-600" />
-                  Download Certificate
-                </h3>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  Get your official digital certificate in PDF format.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card
-              className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <CardHeader className="pb-2">
-                <h3 className="text-lg flex items-center gap-2">
-                  <Mail className="h-5 w-5 text-blue-600" />
-                  Email Certificate
-                </h3>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600">
-                  Have your certificate sent directly to your email.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+              <Card
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <CardHeader className="pb-2">
+                  <h3 className="text-lg flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-blue-600" />
+                    Email Certificate
+                  </h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">
+                    Have your certificate sent directly to your email.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="bg-gray-50 rounded-b-lg p-6 flex justify-between">

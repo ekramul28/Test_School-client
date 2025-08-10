@@ -9,18 +9,21 @@ import {
 import { useCreateCertificateMutation } from "@/redux/features/certificate/certificateApi";
 import { useAppSelector } from "@/redux/hooks";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+
 import QuestionCard from "./QuestionView";
 import ResultCard from "./ResultView";
 import LoadingScreen from "./LoadingView";
 import ErrorCard from "./ErrorView";
 import EmptyCard from "./EmptyCard";
+
 import { useGetAllQuestionsQuery } from "@/redux/features/admin/question.api";
 import type { TQuestion } from "@/types/question";
 
 const AssessmentFlow = () => {
   const user = useAppSelector(selectCurrentUser);
   const navigate = useNavigate();
-  console.log("user", user);
+
+  // States
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -34,73 +37,94 @@ const AssessmentFlow = () => {
     canProceed: boolean;
   }>(null);
 
-  const {
-    data: questionsResponse,
-    isLoading,
-    isError,
-    error,
-  } = useGetAllQuestionsQuery([]);
-
+  // Mapping of steps to levels
   const stepLevelsMap = {
     1: ["A1", "A2"],
     2: ["B1", "B2"],
     3: ["C1", "C2"],
   };
 
-  const currentStepLevels = stepLevelsMap[currentStep];
+  // Levels for current step
+  const levels = stepLevelsMap[currentStep];
 
-  // Filter questions based on current step levels
+  // Prepare query params for API
+  let queryParams = levels.map((level) => ({ name: "level", value: level }));
+
+  queryParams.push({ name: "limit", value: "44" });
+
+  // Fetch filtered questions from backend
+  const {
+    data: questionsResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllQuestionsQuery(queryParams);
+
+  // Current step levels memoized
+  const currentStepLevels = useMemo(
+    () => stepLevelsMap[currentStep],
+    [currentStep]
+  );
+
+  // Client-side filter for extra safety (questionsResponse.data may be undefined)
   const stepQuestions = useMemo(() => {
     if (!questionsResponse?.data) return [];
     return questionsResponse.data.filter((q: TQuestion) =>
       currentStepLevels.includes(q.level)
     );
-  }, [questionsResponse, currentStep]);
+  }, [questionsResponse, currentStepLevels]);
 
-  const questions = stepQuestions;
-
+  // Get existing exam for user & step
   const { data: existingExam } = useGetExamByUserAndStepQuery(
-    { userId: user?.userId || "", step: currentStep },
-    { skip: !user?.userId }
+    { userId: user?._id || "", step: currentStep },
+    { skip: !user?._id }
   );
 
+  // Mutations
   const [createCertificate] = useCreateCertificateMutation();
   const [createExam] = useCreateExamMutation();
   const [updateExam] = useUpdateExamMutation();
 
-  // Timer logic: reset timer on question change
+  // Timer reset on question or other conditions change
   useEffect(() => {
-    if (!questions.length || isCompleted || hasSubmitted) return;
-    setTimeLeft(questions[currentQuestionIndex]?.durationInSeconds || 60);
-  }, [questions, currentQuestionIndex, isCompleted, hasSubmitted]);
+    if (!stepQuestions.length || isCompleted || hasSubmitted) return;
+    setTimeLeft(stepQuestions[currentQuestionIndex]?.durationInSeconds || 60);
+  }, [stepQuestions, currentQuestionIndex, isCompleted, hasSubmitted]);
 
-  // Countdown timer
+  // Countdown timer logic
   useEffect(() => {
-    if (isCompleted || hasSubmitted || !questions.length) return;
+    if (isCompleted || hasSubmitted || !stepQuestions.length) return;
+
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           handleNext();
-          return questions[currentQuestionIndex + 1]?.durationInSeconds || 60;
+          // Reset timer for next question or default 60s
+          return (
+            stepQuestions[currentQuestionIndex + 1]?.durationInSeconds || 60
+          );
         }
         return prev - 1;
       });
     }, 1000);
-    return () => clearInterval(interval);
-  }, [currentQuestionIndex, questions, isCompleted, hasSubmitted]);
 
+    return () => clearInterval(interval);
+  }, [currentQuestionIndex, stepQuestions, isCompleted, hasSubmitted]);
+
+  // Select answer handler
   const handleAnswerSelect = (answer: string) => {
     if (!hasSubmitted) setSelectedAnswer(answer);
   };
 
+  // Next question or finish handler
   const handleNext = () => {
-    if (hasSubmitted || !questions.length) return;
+    if (hasSubmitted || !stepQuestions.length) return;
 
-    if (selectedAnswer === questions[currentQuestionIndex]?.correctAnswer) {
+    if (selectedAnswer === stepQuestions[currentQuestionIndex]?.correctAnswer) {
       setScore((prev) => prev + 1);
     }
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < stepQuestions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
     } else {
@@ -110,8 +134,9 @@ const AssessmentFlow = () => {
     }
   };
 
+  // Result calculation & API calls
   const calculateResult = async () => {
-    const percentage = Number((score / questions.length) * 100);
+    const percentage = (score / stepQuestions.length) * 100;
 
     let levelResult = {
       level: "A1",
@@ -119,65 +144,54 @@ const AssessmentFlow = () => {
       canProceed: false,
     };
 
-    // Step 1 → Levels A1 & A2
     if (currentStep === 1) {
-      if (percentage < 25) {
+      if (percentage < 25)
         levelResult = { level: "A1", passed: false, canProceed: false };
-      } else if (percentage < 50) {
+      else if (percentage < 50)
         levelResult = { level: "A1", passed: true, canProceed: false };
-      } else if (percentage < 75) {
+      else if (percentage < 75)
         levelResult = { level: "A2", passed: true, canProceed: false };
-      } else {
-        levelResult = { level: "A2", passed: true, canProceed: true };
-      }
-    }
-    // Step 2 → Levels B1 & B2
-    else if (currentStep === 2) {
-      if (percentage < 25) {
+      else levelResult = { level: "A2", passed: true, canProceed: true };
+    } else if (currentStep === 2) {
+      if (percentage < 25)
         levelResult = { level: "A2", passed: false, canProceed: false };
-      } else if (percentage < 50) {
+      else if (percentage < 50)
         levelResult = { level: "B1", passed: true, canProceed: false };
-      } else if (percentage < 75) {
+      else if (percentage < 75)
         levelResult = { level: "B2", passed: true, canProceed: false };
-      } else {
-        levelResult = { level: "B2", passed: true, canProceed: true };
-      }
-    }
-    // Step 3 → Levels C1 & C2
-    else if (currentStep === 3) {
-      if (percentage < 50) {
+      else levelResult = { level: "B2", passed: true, canProceed: true };
+    } else if (currentStep === 3) {
+      if (percentage < 50)
         levelResult = { level: "B2", passed: false, canProceed: false };
-      } else if (percentage < 75) {
+      else if (percentage < 75)
         levelResult = { level: "C1", passed: true, canProceed: false };
-      } else {
-        levelResult = { level: "C2", passed: true, canProceed: false };
-      }
+      else levelResult = { level: "C2", passed: true, canProceed: false };
     }
 
     setResult(levelResult);
-    const currentStepNumber = Number(currentStep);
 
-    if (!user?.userId) {
+    if (!user?._id) {
       console.error("User ID is missing.");
       return;
     }
+
     const payload = {
       user: user._id,
-      step: currentStepNumber,
+      step: currentStep,
       score: {
-        correctAnswers: Number(score),
-        totalQuestions: questions.length,
+        correctAnswers: score,
+        totalQuestions: stepQuestions.length,
       },
       certificationLevel: levelResult.level,
       completed: levelResult.passed,
     };
 
     try {
-      if (!existingExam?.data) {
+      if (!existingExam) {
         await createExam(payload).unwrap();
       } else {
         await updateExam({
-          id: existingExam.data._id,
+          id: existingExam._id,
           data: payload,
         }).unwrap();
       }
@@ -186,7 +200,7 @@ const AssessmentFlow = () => {
         await createCertificate({
           userId: user._id,
           certificationLevel: levelResult.level,
-          examStep: currentStepNumber,
+          examStep: currentStep,
         }).unwrap();
       }
     } catch (err) {
@@ -194,10 +208,12 @@ const AssessmentFlow = () => {
     }
   };
 
+  // Restart quiz (reload page)
   const handleRestart = () => window.location.reload();
 
+  // Proceed to next step
   const handleProceed = () => {
-    setCurrentStep((s) => (s + 1) as 1 | 2 | 3);
+    setCurrentStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s));
     setCurrentQuestionIndex(0);
     setScore(0);
     setSelectedAnswer(null);
@@ -206,18 +222,19 @@ const AssessmentFlow = () => {
     setResult(null);
   };
 
+  // Return to dashboard
   const handleReturn = () => navigate("/dashboard");
 
   if (isLoading) return <LoadingScreen />;
   if (isError) return <ErrorCard error={error} onRetry={handleRestart} />;
-  if (!questions.length) return <EmptyCard onReturn={handleReturn} />;
+  if (!stepQuestions.length) return <EmptyCard onReturn={handleReturn} />;
   if (isCompleted && result)
     return (
       <ResultCard
         userId={user?._id}
         result={result}
         score={score}
-        total={questions.length}
+        total={stepQuestions.length}
         currentStep={currentStep}
         onProceed={handleProceed}
         onReturn={handleReturn}
@@ -226,9 +243,9 @@ const AssessmentFlow = () => {
 
   return (
     <QuestionCard
-      question={questions[currentQuestionIndex]}
+      question={stepQuestions[currentQuestionIndex]}
       index={currentQuestionIndex}
-      total={questions.length}
+      total={stepQuestions.length}
       selectedAnswer={selectedAnswer}
       onSelectAnswer={handleAnswerSelect}
       onNext={handleNext}
